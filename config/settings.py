@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-9udt6itde@+$0pvg1_#lfkr&*nkh2l^@3r6s!yuqx(b3e98u%6
 DEBUG = True
 
 # vercel_app/settings.py
-ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app', '.now.sh']
+ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app', '.now.sh', "*"]
 
 
 # Application definition
@@ -138,4 +138,4 @@ LOGIN_REDIRECT_URL = 'recipes-home'
 LOGIN_URL = 'user-login'
 import os
 STATICFILES_DIRS = os.path.join(BASE_DIR, 'static'),
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles build', 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
