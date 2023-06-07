@@ -1,0 +1,89 @@
+{% extends "recipes/base.html" %} {% block content %}
+<h1>Recipe # {{ object.id }}</h1>
+<div class="card my-4">
+  <div class="card-body">
+    <h5 class="card-title">{{ object.title }}</h5>
+    <h6 class="card-subtitle mb-2 text-muted">{{ object.author }}</h6>
+    <p class="card-text">{{ object.description }}</p>
+    <h6 class="card-subtitle mb-2 text-muted">
+      {{ object.updated_at|date:"F d, Y" }}
+    </h6>
+    {% if user.is_authenticated %}
+    <form id="add-to-favorites-form" data-recipe-id="{{ object.pk }}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary">Add to Favorites</button>
+    </form>
+    <div id="add-to-favorites-success" style="display: none">
+      Recipe added to favorites!
+    </div>
+    {% else %}
+    <p>Login required to add to favorites.</p>
+    {% endif %}
+  </div>
+</div>
+
+<h2>Reviews</h2>
+{% if reviews %}
+<ul>
+  {% for review in reviews %}
+  <li><strong>{{ review.author }}:</strong> {{ review.description }}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No reviews yet.</p>
+{% endif %} {% if user.is_authenticated %}
+<h2>Add a Review</h2>
+<form method="post" action="{% url 'add-review' object.id %}">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="author">Author</label>
+    <input
+      type="text"
+      name="author"
+      id="author"
+      class="form-control"
+      value="{{ user.username }}"
+    />
+  </div>
+  <div class="form-group">
+    <label for="description">Description</label>
+    <textarea
+      name="description"
+      id="description"
+      class="form-control"
+      rows="3"
+    ></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit Review</button>
+</form>
+{% endif %}
+
+<script>
+  const addToFavoritesForm = document.getElementById("add-to-favorites-form");
+  const addToFavoritesSuccess = document.getElementById(
+    "add-to-favorites-success"
+  );
+
+  addToFavoritesForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const recipeId = addToFavoritesForm.dataset.recipeId;
+
+    fetch(`/recipe/${recipeId}/add-to-favorites/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}",
+      },
+      body: JSON.stringify({ recipeId }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        addToFavoritesSuccess.style.display = "block";
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  });
+</script>
+
+{% endblock content %}

@@ -1,0 +1,15 @@
+{% extends "recipes/base.html" %}
+
+{% block content %}
+<div class="container">
+  <h1>{{ user.username }}</h1>
+  <h2>Favorite Recipes</h2>
+  <ul>
+    {% for recipe in favorite_recipes %}
+      <li><a href="{{ recipe.get_absolute_url }}">{{ recipe.title }}</a></li>
+    {% empty %}
+      <li>No favorite recipes yet.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock content %}
